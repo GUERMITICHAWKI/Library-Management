@@ -1,4 +1,4 @@
-package com.example.gestionbibliothque
+package com.example.gestionbibliotheque
 
 import org.junit.Test
 

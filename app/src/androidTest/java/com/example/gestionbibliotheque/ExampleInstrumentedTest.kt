@@ -1,4 +1,4 @@
-package com.example.gestionbibliothque
+package com.example.gestionbibliotheque
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

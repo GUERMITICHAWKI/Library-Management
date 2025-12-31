@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.gestionbibliothque"
+    namespace = "com.example.gestionbibliotheque"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.gestionbibliothque"
+        applicationId = "com.example.gestionbibliotheque"
         minSdk = 24
         targetSdk = 36
         versionCode = 1
@@ -16,6 +16,10 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+    buildFeatures {
+        viewBinding = true
+    }
+
 
     buildTypes {
         release {
@@ -45,4 +49,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("androidx.cardview:cardview:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+
 }
