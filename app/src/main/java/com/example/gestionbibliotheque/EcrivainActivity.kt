@@ -1,6 +1,5 @@
 package com.example.gestionbibliotheque
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -26,6 +25,10 @@ class EcrivainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEcrivainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.title = getString(R.string.app_name)
+
+
         binding.btnAll.setOnClickListener {
             binding.etSearch.text?.clear()
             loadAll()
@@ -116,12 +119,10 @@ class EcrivainActivity : AppCompatActivity() {
             .setPositiveButton("Oui") { dialog, _ ->
                 lifecycleScope.launch {
                     val rows = withContext(Dispatchers.IO) { db.update(current.id, nom, prenom, tel) }
-
                     if (rows <= 0) {
                         Toast.makeText(this@EcrivainActivity, "Erreur modification", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
-
                     clearForm()
                     loadAll()
                     Toast.makeText(this@EcrivainActivity, "Écrivain modifié", Toast.LENGTH_SHORT).show()
@@ -145,12 +146,10 @@ class EcrivainActivity : AppCompatActivity() {
             .setPositiveButton("Oui") { dialog, _ ->
                 lifecycleScope.launch {
                     val rows = withContext(Dispatchers.IO) { db.delete(current.id) }
-
                     if (rows <= 0) {
                         Toast.makeText(this@EcrivainActivity, "Erreur suppression", Toast.LENGTH_SHORT).show()
                         return@launch
                     }
-
                     clearForm()
                     loadAll()
                     Toast.makeText(this@EcrivainActivity, "Écrivain supprimé", Toast.LENGTH_SHORT).show()
@@ -193,10 +192,6 @@ class EcrivainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_livres -> {
-                startActivity(Intent(this, LivreActivity::class.java))
-                true
-            }
             R.id.menu_ecrivains -> {
                 loadAll()
                 true

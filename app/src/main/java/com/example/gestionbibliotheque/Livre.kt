@@ -1,4 +1,7 @@
 package com.example.gestionbibliotheque
 
-class Livre {
-}
+data class Livre(
+    val id: Int = 0,
+    val titre: String,
+    val ecrivainId: Int
+)

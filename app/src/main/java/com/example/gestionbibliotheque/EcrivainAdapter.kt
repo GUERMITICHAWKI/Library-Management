@@ -1,24 +1,35 @@
 package com.example.gestionbibliotheque
 
-import android.graphics.Color
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 
 class EcrivainAdapter(
     private val items: MutableList<Ecrivain>,
-    private val onClick: (Ecrivain) -> Unit
+    private val onSelect: (Ecrivain) -> Unit
 ) : RecyclerView.Adapter<EcrivainAdapter.VH>() {
 
     private var selectedId: Int? = null
 
-    class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val cardRoot: CardView = v.findViewById(R.id.cardRoot)
-        val tvNomPrenom: TextView = v.findViewById(R.id.tvNomPrenom)
-        val tvTel: TextView = v.findViewById(R.id.tvTel)
+    fun updateList(newList: List<Ecrivain>) {
+        items.clear()
+        items.addAll(newList)
+        notifyDataSetChanged()
+    }
+
+    fun clearSelection() {
+        selectedId = null
+        notifyDataSetChanged()
+    }
+
+    inner class VH(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val tvNomPrenom: TextView = itemView.findViewById(R.id.tvNomPrenom)
+        val tvTel: TextView = itemView.findViewById(R.id.tvTel)
+        val btnLivres: Button = itemView.findViewById(R.id.btnLivres)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -26,45 +37,31 @@ class EcrivainAdapter(
         return VH(v)
     }
 
+    override fun getItemCount(): Int = items.size
+
     override fun onBindViewHolder(holder: VH, position: Int) {
         val e = items[position]
+
         holder.tvNomPrenom.text = "${e.nom} ${e.prenom}"
         holder.tvTel.text = e.tel
 
-        val isSelected = (e.id == selectedId)
-        holder.cardRoot.setCardBackgroundColor(
-            if (isSelected) Color.parseColor("#2D6A4F") else Color.parseColor("#2A2A2A")
-        )
+        holder.itemView.isSelected = (selectedId == e.id)
 
+        // clic simple = sélectionner
         holder.itemView.setOnClickListener {
-            val oldId = selectedId
             selectedId = e.id
-
-            oldId?.let { oid ->
-                val oldPos = items.indexOfFirst { it.id == oid }
-                if (oldPos != -1) notifyItemChanged(oldPos)
-            }
-            notifyItemChanged(holder.adapterPosition)
-
-            onClick(e)
+            notifyDataSetChanged()
+            onSelect(e)
         }
-    }
 
-    override fun getItemCount(): Int = items.size
-
-    fun updateList(newList: List<Ecrivain>) {
-        items.clear()
-        items.addAll(newList)
-        if (selectedId != null && items.none { it.id == selectedId }) selectedId = null
-        notifyDataSetChanged()
-    }
-
-    fun clearSelection() {
-        val oldId = selectedId
-        selectedId = null
-        oldId?.let { oid ->
-            val oldPos = items.indexOfFirst { it.id == oid }
-            if (oldPos != -1) notifyItemChanged(oldPos)
+        // bouton = ouvrir Livres de cet écrivain [web:1152]
+        holder.btnLivres.setOnClickListener {
+            val ctx = holder.itemView.context
+            val intent = Intent(ctx, LivreActivity::class.java).apply {
+                putExtra(DatabaseHelper.EXTRA_ECRIVAIN_ID, e.id)
+                putExtra(DatabaseHelper.EXTRA_ECRIVAIN_NOM, "${e.nom} ${e.prenom}") // nom affiché dans LivreActivity
+            }
+            ctx.startActivity(intent)
         }
     }
 }
